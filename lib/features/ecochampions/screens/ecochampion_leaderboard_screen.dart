@@ -1,47 +1,68 @@
 import 'package:econexus/common/drawer_file.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../../theme/Theme.dart';
-
-class EcoChampionLeaderboardScreen extends StatelessWidget {
+class EcoChampionLeaderboardScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    // Sample leaderboard data, replace this with your actual data
-    final List<LeaderboardEntry> leaderboardEntries = [
-      LeaderboardEntry(rank: 1, name: 'User 1', score: 1500),
-      LeaderboardEntry(rank: 2, name: 'User 2', score: 1400),
-      LeaderboardEntry(rank: 3, name: 'User 3', score: 1300),
-      LeaderboardEntry(rank: 4, name: 'User 4', score: 1200),
-      LeaderboardEntry(rank: 5, name: 'User 5', score: 1100),
-      LeaderboardEntry(rank: 6, name: 'User 6', score: 1000),
-      // Add more entries
-    ];
+  _EcoChampionLeaderboardScreenState createState() =>
+      _EcoChampionLeaderboardScreenState();
+}
+
+class _EcoChampionLeaderboardScreenState
+    extends State<EcoChampionLeaderboardScreen> {
+  List<LeaderboardEntry> leaderboardEntries = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize Firebase
+    Firebase.initializeApp();
+
+    // Fetch and populate leaderboard entries from Firestore
+    fetchLeaderboardEntries();
+  }
+
+  Future<void> fetchLeaderboardEntries() async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    QuerySnapshot querySnapshot = await firestore.collection('users').get();
+
+    // Clear the previous entries
+    leaderboardEntries.clear();
+
+    // Iterate through the documents
+    for (QueryDocumentSnapshot document in querySnapshot.docs) {
+      final String name = document['name'];
+      final String carbonEmissionsString = document['carbonEmissions'];
+
+      // Parse carbonEmissions as an integer
+      final int carbonEmissions = int.tryParse(carbonEmissionsString) ?? 0;
+
+      leaderboardEntries.add(LeaderboardEntry(
+        rank: leaderboardEntries.length + 1,
+        name: name,
+        score: carbonEmissions,
+      ));
+    }
 
     // Sort the leaderboardEntries based on the score in descending order
     leaderboardEntries.sort((a, b) => b.score.compareTo(a.score));
 
+    // Update the UI
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bgColor,
       drawer: MyDrawer(),
       appBar: AppBar(
         title: Text('EcoChampion Leaderboard'),
       ),
       body: Column(
         children: [
-          const SizedBox(
-            height: 20,
-          ),
-          Center(
-            child: Text(
-              "🪴 Leaderboard! 🪴",
-              style: GoogleFonts.almendraSc(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          _buildPodium(leaderboardEntries.sublist(0, 3)),
+          _buildPodium(leaderboardEntries.sublist(
+              0, 3)), // Display the top 3 on the podium
           Expanded(
             child: ListView.builder(
               itemCount: leaderboardEntries.length - 3,
@@ -59,7 +80,7 @@ class EcoChampionLeaderboardScreen extends StatelessWidget {
                     ),
                   ),
                   title: Text(entry.name),
-                  subtitle: Text('${entry.score} CO2'),
+                  subtitle: Text('${entry.score} points'),
                 );
               },
             ),
@@ -114,7 +135,7 @@ class EcoChampionLeaderboardScreen extends StatelessWidget {
           ),
         ),
         Text(
-          '$score CO2',
+          '$score points',
           style: TextStyle(
             color: Colors.green,
           ),

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 class BreathingActivity extends StatefulWidget {
@@ -33,7 +35,7 @@ class _BreathingActivityState extends State<BreathingActivity> {
   final AudioPlayer audioPlayer = AudioPlayer();
 
   void playAudio() async {
-    audioPlayer.play(AssetSource('assets/lottie/music.mp3'));
+    audioPlayer.play(AssetSource('lottie/music.mp3'));
   }
 
   void _startBreathing() {
@@ -44,6 +46,7 @@ class _BreathingActivityState extends State<BreathingActivity> {
     });
 
     // Play audio here
+    playAudio();
 
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
@@ -54,6 +57,7 @@ class _BreathingActivityState extends State<BreathingActivity> {
         _timer.cancel();
         setState(() {
           _isBreathing = false;
+          updateRelaxationTime(_selectedDuration);
           currentThought = "Breathing exercise complete.";
         });
       }
@@ -189,4 +193,34 @@ void main() {
   runApp(MaterialApp(
     home: BreathingActivity(),
   ));
+}
+
+// Function to update the "relaxationTime" field in Firestore
+Future<void> updateRelaxationTime(int additionalMinutes) async {
+  // Get the current user's ID
+  final String? userId = FirebaseAuth.instance.currentUser?.uid;
+
+  if (userId != null) {
+    // Reference to the Firestore document for the current user
+    final DocumentReference userDoc =
+        FirebaseFirestore.instance.collection('users').doc(userId);
+
+    // Get the current relaxationTime value
+    final DocumentSnapshot snapshot = await userDoc.get();
+    final String? relaxationTimeString = snapshot['relaxationTime'];
+
+    if (relaxationTimeString != null) {
+      // Convert the current value from string to int
+      final int currentRelaxationTime = int.tryParse(relaxationTimeString) ?? 0;
+
+      // Calculate the new relaxationTime in seconds (add minutes and convert to seconds)
+      final int newRelaxationTime = currentRelaxationTime + (additionalMinutes);
+
+      // Convert the new value back to a string
+      final String newRelaxationTimeString = newRelaxationTime.toString();
+
+      // Update the Firestore document with the new relaxationTime value
+      await userDoc.update({'relaxationTime': newRelaxationTimeString});
+    }
+  }
 }

@@ -2,6 +2,7 @@ import 'package:econexus/constants/constants.dart';
 import 'package:econexus/constants/utils.dart';
 import 'package:econexus/features/carbon_footprint_updater/carbon_footprint_updater_screen.dart';
 import 'package:econexus/features/chat/screens/chat_screen.dart';
+import 'package:econexus/features/eco_mind/screens/eco_mind.dart';
 import 'package:econexus/features/ecochampions/screens/ecochampion_leaderboard_screen.dart';
 import 'package:econexus/features/ecoprojects/screens/ecoprojects_screen.dart';
 import 'package:econexus/features/home/screens/home_screen.dart';
@@ -107,6 +108,18 @@ class MyDrawer extends StatelessWidget {
             onTap: () {
               // Navigate to settings screen
               moveScreen(context, CarbonFootprintUpdaterScreen(), true,
+                  isPushReplacement: true);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.piano_sharp),
+            title: Text(
+              'Breathing Exericse ( Relaxation )',
+              style: GoogleFonts.poppins(color: Colors.blue),
+            ),
+            onTap: () {
+              // Navigate to settings screen
+              moveScreen(context, EcoMindScreen(), true,
                   isPushReplacement: true);
             },
           ),

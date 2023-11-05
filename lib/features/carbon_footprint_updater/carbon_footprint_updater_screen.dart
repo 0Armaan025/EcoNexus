@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../common/drawer_file.dart';
 import '../../constants/utils.dart';
@@ -18,7 +20,7 @@ class _CarbonFootprintUpdaterScreenState
   String _selectedTransportationMode = 'Car';
   double _carbonFootprint = 0.0;
   final confettiController =
-      ConfettiController(duration: const Duration(seconds: 3));
+      ConfettiController(duration: const Duration(seconds: 2));
 
   final List<String> transportationModes = [
     'Car',
@@ -56,12 +58,12 @@ class _CarbonFootprintUpdaterScreenState
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Please enter distance travelled';
+                        return 'Please enter distance traveled';
                       }
                       return null;
                     },
                     decoration: InputDecoration(
-                      labelText: 'Distance Travelled (km)',
+                      labelText: 'Distance Traveled (km)',
                       icon: Icon(Icons.directions_car),
                     ),
                     enabled: !isUpdating,
@@ -106,12 +108,6 @@ class _CarbonFootprintUpdaterScreenState
                           });
                         });
                       }
-                      await Future.delayed(
-                          Duration(
-                            seconds: 1,
-                          ), () {
-                        moveScreen(context, HomeScreen(), true,isPushReplacement: true);
-                      });
                     },
                     child: Text('Calculate Carbon Footprint'),
                   ),
@@ -228,14 +224,40 @@ class _CarbonFootprintUpdaterScreenState
 
   Future<void> _updateCarbonFootprint() async {
     // Simulate an update process (you can replace this with your logic)
-    await Future.delayed(Duration(seconds: 2));
 
-    setState(() {
-      _carbonFootprint = calculateCarbonFootprint(
-        double.parse(_distanceController.text),
-        _selectedTransportationMode,
-      );
-    });
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final String? currentUid = _auth.currentUser?.uid ?? '';
+
+    if (currentUid != null) {
+      // Fetch the user's document
+      final userDoc = FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser?.uid ?? '');
+
+      // Get the current carbonEmissions field
+      int currentEmissions = 0; // Initial value if the field is not found
+      final userDocSnapshot = await userDoc.get();
+      if (userDocSnapshot.exists) {
+        final userData = userDocSnapshot.data();
+        if (userData != null && userData['carbonEmissions'] != null) {
+          currentEmissions = int.tryParse(userData['carbonEmissions']) ?? 0;
+        }
+      }
+
+      // Calculate the new carbon footprint
+      final newCarbonFootprint = currentEmissions +
+          calculateCarbonFootprint(
+            double.parse(_distanceController.text),
+            _selectedTransportationMode,
+          );
+
+      // Update the carbonEmissions field with the new value as a string
+      await userDoc.update({'carbonEmissions': newCarbonFootprint.toString()});
+
+      setState(() {
+        _carbonFootprint = newCarbonFootprint.toDouble();
+      });
+    }
   }
 
   @override

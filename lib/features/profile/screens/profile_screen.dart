@@ -35,13 +35,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 CircleAvatar(
                   radius: 75,
                   backgroundImage: NetworkImage(
-                      'https://www.w3schools.com/w3images/avatar2.png'),
+                      'https://makeuc.io/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flogo.dd962578.png&w=828&q=75'),
                 ),
               ],
             ),
             SizedBox(height: 20),
             Text(
-              'John Doe',
+              'Armaan',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -50,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Divider(),
             ListTile(
               leading: Icon(Icons.email),
-              title: Text('johndoe@example.com'),
+              title: Text('armaan33000@gmail.com'),
             ),
             SizedBox(height: 20),
             Container(

@@ -4,6 +4,7 @@ import 'dart:convert';
 class UserModel {
   final String name;
   final String uid;
+  final String carbonEmissions;
   final String email;
   final String profileImage;
   final String city;
@@ -13,6 +14,7 @@ class UserModel {
   UserModel({
     required this.name,
     required this.uid,
+    required this.carbonEmissions,
     required this.email,
     required this.profileImage,
     required this.city,
@@ -24,6 +26,7 @@ class UserModel {
   UserModel copyWith({
     String? name,
     String? uid,
+    String? carbonEmissions,
     String? email,
     String? profileImage,
     String? city,
@@ -34,6 +37,7 @@ class UserModel {
     return UserModel(
       name: name ?? this.name,
       uid: uid ?? this.uid,
+      carbonEmissions: carbonEmissions ?? this.carbonEmissions,
       email: email ?? this.email,
       profileImage: profileImage ?? this.profileImage,
       city: city ?? this.city,
@@ -47,6 +51,7 @@ class UserModel {
     return <String, dynamic>{
       'name': name,
       'uid': uid,
+      'carbonEmissions': carbonEmissions,
       'email': email,
       'profileImage': profileImage,
       'city': city,
@@ -60,6 +65,7 @@ class UserModel {
     return UserModel(
       name: map['name'] as String,
       uid: map['uid'] as String,
+      carbonEmissions: map['carbonEmissions'] as String,
       email: map['email'] as String,
       profileImage: map['profileImage'] as String,
       city: map['city'] as String,
@@ -71,37 +77,40 @@ class UserModel {
 
   String toJson() => json.encode(toMap());
 
-  factory UserModel.fromJson(String source) =>
-      UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory UserModel.fromJson(String source) => UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
-    return 'UserModel(name: $name, uid: $uid, email: $email, profileImage: $profileImage, city: $city, password: $password, relaxationTime: $relaxationTime, eventsJoined: $eventsJoined)';
+    return 'UserModel(name: $name, uid: $uid, carbonEmissions: $carbonEmissions, email: $email, profileImage: $profileImage, city: $city, password: $password, relaxationTime: $relaxationTime, eventsJoined: $eventsJoined)';
   }
 
   @override
   bool operator ==(covariant UserModel other) {
     if (identical(this, other)) return true;
-
-    return other.name == name &&
-        other.uid == uid &&
-        other.email == email &&
-        other.profileImage == profileImage &&
-        other.city == city &&
-        other.password == password &&
-        other.relaxationTime == relaxationTime &&
-        other.eventsJoined == eventsJoined;
+  
+    return 
+      other.name == name &&
+      other.uid == uid &&
+      other.carbonEmissions == carbonEmissions &&
+      other.email == email &&
+      other.profileImage == profileImage &&
+      other.city == city &&
+      other.password == password &&
+      other.relaxationTime == relaxationTime &&
+      other.eventsJoined == eventsJoined;
   }
 
   @override
   int get hashCode {
     return name.hashCode ^
-        uid.hashCode ^
-        email.hashCode ^
-        profileImage.hashCode ^
-        city.hashCode ^
-        password.hashCode ^
-        relaxationTime.hashCode ^
-        eventsJoined.hashCode;
+      uid.hashCode ^
+      carbonEmissions.hashCode ^
+      email.hashCode ^
+      profileImage.hashCode ^
+      city.hashCode ^
+      password.hashCode ^
+      relaxationTime.hashCode ^
+      eventsJoined.hashCode;
   }
 }
+

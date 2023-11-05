@@ -21,6 +21,7 @@ class AuthRepository {
       UserModel newModel = UserModel(
           name: model.name,
           email: model.email,
+          carbonEmissions: '0',
           password: model.password,
           uid: uid,
           profileImage: '',
