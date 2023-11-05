@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "358189430330",
+    "project_id": "econexus",
+    "storage_bucket": "econexus.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:358189430330:android:dd724295d04e4f7df52703",
+        "android_client_info": {
+          "package_name": "com.example.econexus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBprBg4om0CCjquCrM2FXX4P1vfrtNB1Lo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
