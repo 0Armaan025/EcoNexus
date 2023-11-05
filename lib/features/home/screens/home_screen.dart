@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:econexus/common/custom_card_widget.dart';
 import 'package:econexus/common/custom_features_row.dart';
 import 'package:econexus/constants/constants.dart';
+import 'package:econexus/constants/utils.dart';
+import 'package:econexus/features/ecochampions/screens/ecochampion_leaderboard_screen.dart';
+import 'package:econexus/features/ecoprojects/screens/ecoprojects_screen.dart';
 import 'package:econexus/theme/Theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   double plotData = 0;
+  double eventsJoined = 0;
 
   @override
   void initState() {
@@ -45,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
           .then((DocumentSnapshot snapshot) {
         setState(() {
           plotData = double.parse(snapshot.get('relaxationTime'));
+          eventsJoined = double.parse(snapshot.get('eventsJoined'));
         });
       });
     }
@@ -54,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<FlSpot> relaxationTimeData = [];
 
   Map<String, double> ecoAwarenessEventsData = {
-    'Joined': 5,
+    'Joined': 0, // Initialize with 0, you will update it later
     'Remaining': 15,
   };
 
@@ -63,6 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     relaxationTimeData.add(FlSpot(0, plotData));
+    ecoAwarenessEventsData['Joined'] = eventsJoined;
 
     return Scaffold(
       backgroundColor: AppTheme.bgColor,
@@ -192,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   minY: 0,
-                  maxY: 60, // Adjust the Y-axis max value as needed
+                  maxY: 200, // Adjust the Y-axis max value as needed
                   barGroups: relaxationTimeData.asMap().entries.map((entry) {
                     final index = entry.key;
                     final value = entry.value.y;
@@ -201,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       barRods: [
                         BarChartRodData(
                           borderRadius: BorderRadius.circular(0),
-                          width: 170,
+                          width: 30,
                           toY: value,
                         ),
                       ],
@@ -219,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Container(
-              height: 250,
+              height: 350,
               child: PieChart(
                 PieChartData(
                   sections: [
@@ -247,18 +253,26 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 25),
             CustomCardWidget(
+              onTap: () {
+                moveScreen(context, EcoProjectsScreen(), false,
+                    isPushReplacement: false);
+              },
               bgColor: Colors.blue,
               textColor: Colors.white,
-              text: "Something",
+              text: "Eco-Projects",
               imageUrl:
                   'https://plus.unsplash.com/premium_photo-1666345061648-d5f55842a515?auto=format&fit=crop&q=60&w=600&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8ZWNvJTIwcHJvamVjdHxlbnwwfHwwfHx8MA%3D%3D',
             ),
             CustomCardWidget(
-              bgColor: Colors.blue,
+              onTap: () {
+                moveScreen(context, EcoChampionLeaderboardScreen(), false,
+                    isPushReplacement: false);
+              },
+              bgColor: Colors.purple,
               textColor: Colors.white,
-              text: "Something",
-            imageUrl:
-                  'https://plus.unsplash.com/premium_photo-1666345061648-d5f55842a515?auto=format&fit=crop&q=60&w=600&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8ZWNvJTIwcHJvamVjdHxlbnwwfHwwfHx8MA%3D%3D',
+              text: "Eco-Champions",
+              imageUrl:
+                  'https://media.istockphoto.com/id/1139813965/photo/holding-gold-trophy.webp?b=1&s=170667a&w=0&k=20&c=aboDhcxBwIuhQNzkI7Wc_-u3NcvopLUb8OuNVu-LhUI=',
             ),
             const SizedBox(
               height: 40,

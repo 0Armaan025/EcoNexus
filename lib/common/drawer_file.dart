@@ -77,6 +77,13 @@ class MyDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: Icon(Icons.print),
+            title: Text('Add Carbon Footprint details'),
+            onTap: () {
+              // Navigate to settings screen
+            },
+          ),
+          ListTile(
             leading: Icon(Icons.settings),
             title: Text('Settings'),
             onTap: () {

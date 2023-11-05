@@ -14,8 +14,8 @@ class _CustomFeaturesRowState extends State<CustomFeaturesRow> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        
         CustomCardWidget(
+          onTap: () {},
           bgColor: Colors.blue,
           textColor: Colors.white,
           text: "Something",

@@ -1,5 +1,8 @@
 import 'package:econexus/common/drawer_file.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../../../theme/Theme.dart';
 
 class EcoChampionLeaderboardScreen extends StatelessWidget {
   @override
@@ -19,12 +22,25 @@ class EcoChampionLeaderboardScreen extends StatelessWidget {
     leaderboardEntries.sort((a, b) => b.score.compareTo(a.score));
 
     return Scaffold(
+      backgroundColor: AppTheme.bgColor,
       drawer: MyDrawer(),
       appBar: AppBar(
         title: Text('EcoChampion Leaderboard'),
       ),
       body: Column(
         children: [
+          const SizedBox(
+            height: 20,
+          ),
+          Center(
+            child: Text(
+              "🪴 Leaderboard! 🪴",
+              style: GoogleFonts.almendraSc(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
           _buildPodium(leaderboardEntries.sublist(0, 3)),
           Expanded(
             child: ListView.builder(
@@ -43,7 +59,7 @@ class EcoChampionLeaderboardScreen extends StatelessWidget {
                     ),
                   ),
                   title: Text(entry.name),
-                  subtitle: Text('${entry.score} points'),
+                  subtitle: Text('${entry.score} CO2'),
                 );
               },
             ),
@@ -98,7 +114,7 @@ class EcoChampionLeaderboardScreen extends StatelessWidget {
           ),
         ),
         Text(
-          '$score points',
+          '$score CO2',
           style: TextStyle(
             color: Colors.green,
           ),

@@ -8,11 +8,13 @@ class CustomCardWidget extends StatefulWidget {
   final Color textColor;
   final String text;
   final String imageUrl;
+  final VoidCallback onTap;
   const CustomCardWidget(
       {super.key,
       required this.bgColor,
       required this.textColor,
       required this.text,
+      required this.onTap,
       required this.imageUrl});
 
   @override
@@ -45,29 +47,33 @@ class _CustomCardWidgetState extends State<CustomCardWidget> {
             widget.text,
             style: GoogleFonts.poppins(
               color: widget.textColor,
-              fontSize: 14,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(
             height: 20,
           ),
-          Container(
-            height: size.height * 0.05,
-            width: double.infinity,
-            margin: const EdgeInsets.symmetric(
-              horizontal: 50,
-            ),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: AppTheme.buttonColor,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              "Continue",
-              style: GoogleFonts.roboto(
-                color: AppTheme.buttonTextColor,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+          InkWell(
+            onTap: widget.onTap,
+            child: Container(
+              height: size.height * 0.05,
+              width: double.infinity,
+              margin: const EdgeInsets.symmetric(
+                horizontal: 50,
+              ),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: AppTheme.buttonColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                "Continue",
+                style: GoogleFonts.roboto(
+                  color: AppTheme.buttonTextColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
