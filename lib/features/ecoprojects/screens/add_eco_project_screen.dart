@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:econexus/common/custom_continue_button.dart';
+import 'package:econexus/features/authentication/models/eco_projects.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +9,7 @@ import 'package:intl/intl.dart';
 import '../../../common/drawer_file.dart';
 import '../../../constants/constants.dart';
 import '../../../theme/Theme.dart';
+import '../../data/controllers/data_controller.dart';
 
 class AddEcoProjectScreen extends StatefulWidget {
   const AddEcoProjectScreen({Key? key}) : super(key: key);
@@ -24,6 +26,20 @@ class _AddEcoProjectScreenState extends State<AddEcoProjectScreen> {
   DateTime selectedDate = DateTime.now();
   final ImagePicker _picker = ImagePicker();
   XFile? _image;
+
+  addEcoProject(BuildContext context) {
+    DataController controller = DataController();
+    EcoProjectModel model = EcoProjectModel(
+        name: projectNameController.text,
+        bannerImage: '',
+        location: locationController.text,
+        description: descriptionController.text,
+        goal: goalController.text,
+        startDate: selectedDate.toString(),
+        uploaderUid: uid);
+
+    controller.addEcoProject(context, model);
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
@@ -158,7 +174,9 @@ class _AddEcoProjectScreenState extends State<AddEcoProjectScreen> {
               height: 20,
             ),
             CustomContinueButton(
-              onPressed: () {},
+              onPressed: () {
+                addEcoProject(context);
+              },
               text: "Let's do this 💫",
             )
           ],

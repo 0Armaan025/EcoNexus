@@ -1,15 +1,18 @@
+import 'package:econexus/common/drawer_file.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../../common/drawer_file.dart';
-import '../../../constants/constants.dart';
+import '../../../constants/utils.dart';
+import '../../authentication/screens/log_in/sign_in_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
+
+//time to work on drawer_file.dart
 
 class _ChatScreenState extends State<ChatScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -25,41 +28,36 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _sendMessage(String text) async {
     if (text.isNotEmpty) {
-      await _firestore.collection('messages').add({
-        'text': text,
-        'senderId': FirebaseAuth.instance.currentUser?.uid ?? '',
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-      _textController.clear();
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await _firestore.collection('messages').add({
+          'text': text,
+          'senderId': user.uid,
+          'senderEmail': user.email,
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+        _textController.clear();
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: MyDrawer(),
       appBar: AppBar(
-        title: Text('$appName'),
-        actions: <Widget>[
-          FirebaseAuth.instance.currentUser != null
-              ? IconButton(
-                  icon: Icon(Icons.exit_to_app),
-                  onPressed: () async {
-                    await _auth.signOut();
-                  },
-                )
-              : Container()
-        ],
+        title: Text('Chat App'),
       ),
+      drawer: MyDrawer(),
       body: Column(
         children: <Widget>[
           FirebaseAuth.instance.currentUser != null
               ? Text(
-                  'Logged in as: ${FirebaseAuth.instance.currentUser!.email}')
+                  'Logged in as: ${FirebaseAuth.instance.currentUser!.email ?? ''}')
               : ElevatedButton(
-                  child: Text('Log in '),
+                  child: Text('Log in'),
                   onPressed: () {
-                    // Implement Google Sign-In here
+                    moveScreen(context, SignInScreen(), false,
+                        isPushReplacement: false);
                   },
                 ),
           Expanded(
@@ -69,7 +67,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   .orderBy('timestamp')
                   .snapshots(),
               builder: (context, snapshot) {
-                if (!snapshot.hasData) {
+                if (!snapshot.hasData || snapshot.data == null) {
                   return CircularProgressIndicator();
                 }
                 final messages = snapshot.data!.docs.reversed;
@@ -77,13 +75,20 @@ class _ChatScreenState extends State<ChatScreen> {
                 for (var message in messages) {
                   final messageText = message.data()['text'];
                   final messageSender = message.data()['senderId'];
+                  final messageSenderEmail = message.data()['senderEmail'];
                   final currentUser = FirebaseAuth.instance.currentUser;
 
-                  final messageWidget = ChatMessage(
-                    text: messageText,
-                    isMe: currentUser == messageSender,
-                  );
-                  _messages.add(messageWidget);
+                  if (messageText != null &&
+                      messageSender != null &&
+                      messageSenderEmail != null) {
+                    final messageWidget = ChatMessage(
+                      text: messageText,
+                      isMe: currentUser != null &&
+                          currentUser.uid == messageSender,
+                      senderEmail: messageSenderEmail,
+                    );
+                    _messages.add(messageWidget);
+                  }
                 }
                 return ListView(
                   reverse: true,
@@ -119,31 +124,52 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 }
 
+//fixed null value problem, this should work now
+
 class ChatMessage extends StatelessWidget {
   final String text;
   final bool isMe;
+  final String senderEmail;
 
-  ChatMessage({required this.text, required this.isMe});
+  ChatMessage(
+      {required this.text, required this.isMe, required this.senderEmail});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Align(
-        alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-        child: Container(
-          decoration: BoxDecoration(
-            color: isMe ? Colors.blue : Colors.grey,
-            borderRadius: BorderRadius.circular(8),
+      child: Column(
+        crossAxisAlignment:
+            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Text(
+            senderEmail,
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          padding: const EdgeInsets.all(8),
-          child: Text(
-            text,
-            style: TextStyle(
-              color: Colors.white,
+          Container(
+            decoration: BoxDecoration(
+              color: isMe ? Colors.blue : Colors.grey,
+              borderRadius: isMe
+                  ? BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      topRight: Radius.circular(8),
+                      bottomLeft: Radius.circular(8),
+                    )
+                  : BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      topRight: Radius.circular(8),
+                      bottomRight: Radius.circular(8),
+                    ),
+            ),
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              text,
+              style: TextStyle(
+                color: Colors.white,
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

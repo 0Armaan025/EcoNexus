@@ -1,9 +1,14 @@
 import 'package:econexus/constants/constants.dart';
 import 'package:econexus/constants/utils.dart';
+import 'package:econexus/features/carbon_footprint_updater/carbon_footprint_updater_screen.dart';
 import 'package:econexus/features/chat/screens/chat_screen.dart';
+import 'package:econexus/features/ecochampions/screens/ecochampion_leaderboard_screen.dart';
+import 'package:econexus/features/ecoprojects/screens/ecoprojects_screen.dart';
+import 'package:econexus/features/home/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../features/profile/screens/profile_screen.dart';
 import '../theme/Theme.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -42,68 +47,95 @@ class MyDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.home),
-            title: Text('Home'),
+            title: Text(
+              'Home',
+              style: GoogleFonts.poppins(color: Colors.blue),
+            ),
             onTap: () {
-              // Navigate to home screen
+              moveScreen(context, HomeScreen(), true, isPushReplacement: true);
             },
           ),
           ListTile(
             leading: Icon(Icons.eco),
-            title: Text('Eco Projects'),
+            title: Text(
+              'Eco Projects',
+              style: GoogleFonts.poppins(color: Colors.blue),
+            ),
             onTap: () {
-              // Navigate to settings screen
+              moveScreen(context, EcoProjectsScreen(), true,
+                  isPushReplacement: true);
             },
           ),
           ListTile(
             leading: Icon(Icons.leaderboard),
-            title: Text('Eco Champions'),
+            title: Text(
+              'Eco Champions',
+              style: GoogleFonts.poppins(color: Colors.blue),
+            ),
             onTap: () {
-              // Navigate to settings screen
+              moveScreen(context, EcoChampionLeaderboardScreen(), true,
+                  isPushReplacement: true);
             },
           ),
           ListTile(
             leading: Icon(Icons.chat),
-            title: Text('Chat Time'),
+            title: Text(
+              'Chat Time',
+              style: GoogleFonts.poppins(color: Colors.blue),
+            ),
             onTap: () {
-              moveScreen(context, ChatScreen(), false,
-                  isPushReplacement: false);
+              moveScreen(context, ChatScreen(), true, isPushReplacement: true);
             },
           ),
           ListTile(
             leading: Icon(Icons.person),
-            title: Text('Profile'),
+            title: Text(
+              'Profile',
+              style: GoogleFonts.poppins(color: Colors.blue),
+            ),
             onTap: () {
-              // Navigate to settings screen
+              moveScreen(context, ProfileScreen(), true,
+                  isPushReplacement: true);
             },
           ),
           ListTile(
             leading: Icon(Icons.print),
-            title: Text('Add Carbon Footprint details'),
+            title: Text(
+              'Add Carbon Footprint details',
+              style: GoogleFonts.poppins(color: Colors.blue),
+            ),
             onTap: () {
               // Navigate to settings screen
+              moveScreen(context, CarbonFootprintUpdaterScreen(), true,
+                  isPushReplacement: true);
             },
           ),
           ListTile(
             leading: Icon(Icons.settings),
-            title: Text('Settings'),
-            onTap: () {
-              // Navigate to settings screen
-            },
+            title: Text(
+              'Settings',
+              style: GoogleFonts.poppins(color: Colors.blue),
+            ),
+            onTap: () {},
           ),
           Divider(),
           ListTile(
             leading: Icon(Icons.help),
-            title: Text('Help'),
-            onTap: () {
-              // Navigate to help screen
-            },
+            title: Text(
+              'Help',
+              style: GoogleFonts.poppins(color: Colors.blue[200]),
+            ),
+            onTap: () {},
           ),
           ListTile(
-            leading: Icon(Icons.info),
-            title: Text('About'),
-            onTap: () {
-              // Navigate to about screen
-            },
+            leading: Icon(
+              Icons.info,
+            ),
+            title: Text(
+              'About',
+              style: GoogleFonts.poppins(color: Colors.blue[200]),
+            ),
+            onTap: () {},
           ),
         ],
       ),

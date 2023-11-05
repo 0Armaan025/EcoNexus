@@ -225,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Container(
-              height: 350,
+              height: 180,
               child: PieChart(
                 PieChartData(
                   sections: [
